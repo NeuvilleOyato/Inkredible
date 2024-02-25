@@ -14,25 +14,19 @@ class TestimoniesRecord extends FirestoreRecord {
     _initializeFields();
   }
 
-  // "Testimonies" field.
-  List<TestimonialsStruct>? _testimonies;
-  List<TestimonialsStruct> get testimonies => _testimonies ?? const [];
-  bool hasTestimonies() => _testimonies != null;
+  // "testimony" field.
+  String? _testimony;
+  String get testimony => _testimony ?? '';
+  bool hasTestimony() => _testimony != null;
 
-  // "PriceList" field.
-  List<PriceListsStruct>? _priceList;
-  List<PriceListsStruct> get priceList => _priceList ?? const [];
-  bool hasPriceList() => _priceList != null;
+  // "testimonyPerson" field.
+  String? _testimonyPerson;
+  String get testimonyPerson => _testimonyPerson ?? '';
+  bool hasTestimonyPerson() => _testimonyPerson != null;
 
   void _initializeFields() {
-    _testimonies = getStructList(
-      snapshotData['Testimonies'],
-      TestimonialsStruct.fromMap,
-    );
-    _priceList = getStructList(
-      snapshotData['PriceList'],
-      PriceListsStruct.fromMap,
-    );
+    _testimony = snapshotData['testimony'] as String?;
+    _testimonyPerson = snapshotData['testimonyPerson'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -69,9 +63,15 @@ class TestimoniesRecord extends FirestoreRecord {
       reference.path.hashCode == other.reference.path.hashCode;
 }
 
-Map<String, dynamic> createTestimoniesRecordData() {
+Map<String, dynamic> createTestimoniesRecordData({
+  String? testimony,
+  String? testimonyPerson,
+}) {
   final firestoreData = mapToFirestore(
-    <String, dynamic>{}.withoutNulls,
+    <String, dynamic>{
+      'testimony': testimony,
+      'testimonyPerson': testimonyPerson,
+    }.withoutNulls,
   );
 
   return firestoreData;
@@ -82,14 +82,13 @@ class TestimoniesRecordDocumentEquality implements Equality<TestimoniesRecord> {
 
   @override
   bool equals(TestimoniesRecord? e1, TestimoniesRecord? e2) {
-    const listEquality = ListEquality();
-    return listEquality.equals(e1?.testimonies, e2?.testimonies) &&
-        listEquality.equals(e1?.priceList, e2?.priceList);
+    return e1?.testimony == e2?.testimony &&
+        e1?.testimonyPerson == e2?.testimonyPerson;
   }
 
   @override
   int hash(TestimoniesRecord? e) =>
-      const ListEquality().hash([e?.testimonies, e?.priceList]);
+      const ListEquality().hash([e?.testimony, e?.testimonyPerson]);
 
   @override
   bool isValidKey(Object? o) => o is TestimoniesRecord;
